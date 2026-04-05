@@ -1,6 +1,7 @@
 import pygame
 import sys
 import pygame.mixer
+
 pygame.init()
 pygame.mixer.init() # Initialize sound engine
 
@@ -10,33 +11,33 @@ screen = pygame.display.set_mode((900, 500))
 Running = True
 
 # --- LOAD ASSETS (Images) ---
-Sky_surface = pygame.image.load("Theme\sky.png").convert()
-ground_surface1 = pygame.image.load("Theme\ground1.png").convert()
-ground_surface2 = pygame.image.load("Theme\ground2.png").convert()
-touchable_surface = pygame.image.load("Theme\Touchableground.png").convert_alpha()
+Sky_surface = pygame.image.load("Theme/sky.png").convert()
+ground_surface1 = pygame.image.load("Theme/ground1.png").convert()
+ground_surface2 = pygame.image.load("Theme/ground2.png").convert()
+touchable_surface = pygame.image.load("Theme/Touchableground.png").convert_alpha()
 
 # Kitty Animations
-kitty_front = pygame.image.load("Kitty\kittyfront.png").convert_alpha()
-kitty_idle = pygame.image.load("Kitty\kittyidle.png").convert_alpha()
-kitty_walkA = pygame.image.load("Kitty\kittywalkA.png").convert_alpha()
-kitty_walkB = pygame.image.load("Kitty\kittywalkB.png").convert_alpha()
+kitty_front = pygame.image.load("Kitty/kittyfront.png").convert_alpha()
+kitty_idle = pygame.image.load("Kitty/kittyidle.png").convert_alpha()
+kitty_walkA = pygame.image.load("Kitty/kittywalkA.png").convert_alpha()
+kitty_walkB = pygame.image.load("Kitty/kittywalkB.png").convert_alpha()
 kitty_jump = kitty_front
 
 # Enemy Animations
-ladybug_rest = pygame.image.load("Enemies\ladybugrest.png").convert_alpha()
-ladybug_walkA = pygame.image.load("Enemies\ladybugwalka.png").convert_alpha()
-ladybug_walkB = pygame.image.load("Enemies\ladybugwalkb.png").convert_alpha()
+ladybug_rest = pygame.image.load("Enemies/ladybugrest.png").convert_alpha()
+ladybug_walkA = pygame.image.load("Enemies/ladybugwalka.png").convert_alpha()
+ladybug_walkB = pygame.image.load("Enemies/ladybugwalkb.png").convert_alpha()
 
-snail_rest = pygame.image.load("Enemies\snailrest.png").convert_alpha()
-snail_walkA = pygame.image.load("Enemies\snailwalka.png").convert_alpha()
-snail_walkB = pygame.image.load("Enemies\snailwalkb.png").convert_alpha()
+snail_rest = pygame.image.load("Enemies/snailrest.png").convert_alpha()
+snail_walkA = pygame.image.load("Enemies/snailwalka.png").convert_alpha()
+snail_walkB = pygame.image.load("Enemies/snailwalkb.png").convert_alpha()
 
 # --- LOAD ASSETS (Audio) ---
-pygame.mixer.music.load("AUDIO\BackGroundmusic.wav")
-snd_jump = pygame.mixer.Sound("AUDIO\Jumpbro.wav")
-snd_lose = pygame.mixer.Sound("AUDIO\lostbro.wav")
-snd_win = pygame.mixer.Sound("AUDIO\wonbro.wav")
-snd_start = pygame.mixer.Sound("AUDIO\soundafterwepress_start.wav")
+pygame.mixer.music.load("AUDIO/BackGroundmusic.wav")
+snd_jump = pygame.mixer.Sound("AUDIO/Jumpbro.wav")
+snd_lose = pygame.mixer.Sound("AUDIO/lostbro.wav")
+snd_win = pygame.mixer.Sound("AUDIO/wonbro.wav")
+snd_start = pygame.mixer.Sound("AUDIO/soundafterwepress_start.wav")
 
 # UI Fonts
 title_font = pygame.font.Font("freesansbold.ttf", 35)
@@ -116,10 +117,8 @@ while Running:
         anim_timer += delta_time
         if anim_timer >= 0.2: # Switch animation frame every 0.2 seconds
             anim_timer = 0
-            anim_frame = 1 
-            if anim_frame == 0:
-                anim_frame = 1 
-            else :anim_frame = 0
+            # FIXED ANIMATION TOGGLE HERE
+            anim_frame = 1 if anim_frame == 0 else 0
             
         enemy_state_timer += delta_time
         if enemy_state_timer >= 3.0: # Swap enemy states every 3 seconds
@@ -247,6 +246,10 @@ while Running:
                 kitty_x = screen.get_width() - current_kitty_img.get_width()
 
         # --- DRAWING THE GAME ---
+        
+        # PREVENT THE SCREEN SMEAR EFFECT
+        screen.fill((135, 206, 235)) 
+        
         for x_pos in range(0, screen.get_width() + Sky_surface.get_width(), Sky_surface.get_width()):
             for y_pos in range(0, screen.get_height() - Sky_surface.get_height(), Sky_surface.get_height()): 
                 screen.blit(Sky_surface, (x_pos + sky_scroll, y_pos))
@@ -274,7 +277,6 @@ while Running:
             dead_snail = pygame.transform.flip(dead_snail, False, True) # Upside down
             screen.blit(dead_snail, (20, screen.get_height() - 40)) # Trophies at bottom left
         else:
-            # CHANGED > to < HERE
             if snail_x < kitty_x: # Flip enemy to face right if it is behind kitty
                 current_snail_img = pygame.transform.flip(current_snail_img, True, False)
             screen.blit(current_snail_img, (snail_x, snail_y))
@@ -285,7 +287,6 @@ while Running:
             dead_bug = pygame.transform.flip(dead_bug, False, True) # Upside down
             screen.blit(dead_bug, (60, screen.get_height() - 40)) # Trophies at bottom left
         else:
-            # CHANGED > to < HERE
             if ladybug_x < kitty_x: 
                 current_ladybug_img = pygame.transform.flip(current_ladybug_img, True, False)
             screen.blit(current_ladybug_img, (ladybug_x, ladybug_y))
